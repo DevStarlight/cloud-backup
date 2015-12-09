@@ -1,0 +1,12 @@
+# https://git-scm.com/docs/gitignore
+# https://help.github.com/articles/ignoring-files
+# Example .gitignore files: https://github.com/github/gitignore
+/bower_components/
+/node_modules/
+/cloud/idInstances/i-94a21b19.php
+/cloud/ipInstances/54.76.0.72.php
+/cloud/microsites/prensacruzroja.es.php
+/credentials/ftpkeypair.ppk
+/credentials/jesus_test.pem
+/credentials/jesus_test.txt
+/config2.php
