@@ -1,0 +1,53 @@
+
+=========== USAGE ===========
+
+:: CommandLine Usage ::
+
+------------------------------------------------------------
+
+--backup :: Wihout arguments do backup of the predefined instances.
+
+=> example :: php index.php --backup
+=> example :: http://vivocomback_manager/index.php?backup
+
+------------------------------------------------------------
+
+--backup --idInstance "Instance id" :: Do a backup of an instance id.
+
+=> example :: php index.php --backup --idInstance "i-218931"
+=> example :: http://vivocomback_manager/index.php?backup&idInstance=i-218931
+
+------------------------------------------------------------
+
+--backup --ipInstance "Instance IP" :: Do a backup of an instance located at a defined IP Address.
+
+=> example :: php index.php --backup --ipInstance "80.31.2.212"
+=> example :: http://vivocomback_manager/index.php?backup&ipInstance=80.31.2.212
+
+------------------------------------------------------------
+
+--backup --microsite "microsite name" :: Do a backup of an instance defined by a microsite.
+
+=> example :: php index.php --backup --microsite "it.vivocom.eu"
+=> example :: http://vivocomback_manager/index.php?backup&microsite=it.vivocom.eu
+
+------------------------------------------------------------
+
+--restore --idInstance "Instance id" :: Do a restore of an instance id.
+
+=> example :: php index.php --restore --idInstance "i-218931"
+=> example :: http://vivocomback_manager/index.php?restore&idInstance=i-218931
+
+------------------------------------------------------------
+
+--restore --ipInstance "Instance IP" :: Do a restore of an instance located at a defined IP Address.
+
+=> example :: php index.php --restore --ipInstance "80.31.2.212"
+=> example :: http://vivocomback_manager/index.php?restore&ipInstance=80.31.2.212
+
+------------------------------------------------------------
+
+--restore --microsite "microsite name" :: Do a restore of an instance defined by a microsite.
+
+=> example :: php index.php --restore --microsite "it.vivocom.eu"
+=> example :: http://vivocomback_manager/index.php?restore&microsite=it.vivocom.eu
