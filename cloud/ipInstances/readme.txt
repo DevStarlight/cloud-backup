@@ -14,14 +14,5 @@ $object = [
         'sites-available' => [
             '/etc/apache2/sites-available/your_file.conf',
         ]
-    ],
-    'ec2' => [
-        'ec2_key' => 'XXXXXXXXXXXXXXXX',
-        'ec2_secret' => 'XxXxxxXxxXXXxXxXXxxxxxxXxXXxXxx'
-        
-    ],
-    's3' => [
-        's3_key' => 'XXXXXXXXXXXXXXXX',
-        's3_secret' => 'XxXxxxXxxXXXxXxXXxxxxxxXxXXxXxx'
     ]
 ];

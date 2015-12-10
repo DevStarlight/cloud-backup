@@ -31,8 +31,8 @@ class AwsS3Handler
         {
             $this->_s3->uploadDirectory($directory, $bucket, $keyPrefix, array(
                 'params'      => array('ACL' => 'public-read'),
-                'concurrency' => 20,
-                'debug'       => true
+                'concurrency' => 20
+//                'debug'       => true
             ));
         }
         catch (S3Exception $e)

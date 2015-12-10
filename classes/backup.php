@@ -4,7 +4,6 @@
  * Twitter: @DevStarlight
  *
  * http://phpseclib.sourceforge.net/
- * http://stackoverflow.com/questions/22502016/phpseclib-stfp-check-directory-exists
  */
 
 require_once(dirname(__DIR__).DIRECTORY_SEPARATOR.'libs'.DIRECTORY_SEPARATOR.'amazon'.DIRECTORY_SEPARATOR.'autoload.php');
@@ -22,11 +21,11 @@ class Backup
     {
         if (count($options) === 1)
         {
-            require_once(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'cloud' . DIRECTORY_SEPARATOR . 'microsites' . DIRECTORY_SEPARATOR . $options['microsite'] . '.php');
-            require_once(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'cloud' . DIRECTORY_SEPARATOR . 'microsite' . DIRECTORY_SEPARATOR . $options['ipInstance'] . '.php');
-            require_once(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'cloud' . DIRECTORY_SEPARATOR . 'microsite' . DIRECTORY_SEPARATOR . $options['idInstance'] . '.php');
+            $this->backupAllIdInstances();
 
-            $this->backupAll();
+//            $this->backupAllIpInstances();
+//
+//            $this->backupAllMicrosites();
         }
         else
         {
@@ -45,9 +44,13 @@ class Backup
 
             $this->backupSelected($object);
         }
-    }
 
-    public function backupAll(){}
+        $this->_s3 = new AwsS3Handler(S3_KEY, S3_SECRET);
+
+        $this->_s3->uploadToBucket(S3_BUCKET, S3_PATH . '/' . date("m_d_y"), SAVE_PATH . date("m_d_y"));
+
+        $this->rrmdir(SAVE_PATH . date("m_d_y"));
+    }
 
     public function getFiles($object, $save_folder, &$sftp)
     {
@@ -78,23 +81,20 @@ class Backup
                 mkdir($save_folder . '/' . end(explode('/',$value)), 0777);
             }
 
-            $list = $sftp->nlist($value);
-
-            foreach ($list as $key2 => $value2)
+            foreach ($sftp->rawlist($value) as $key2 => $value2)
             {
-//                if ($sftp->chdir($value))
-//                {
-//                    $this->getDirectories($object[$key2], $save_folder . '/' . end(explode('/',$value)) . '/' . $value2, $sftp);
-//                }
-//                else
-//                {
-                    if ($value2 !== '.' && $value2 !== '..')
+                if ($key2 !== '.' && $key2 !== '..')
+                {
+                    if ($value2['type'] == NET_SFTP_TYPE_DIRECTORY)
                     {
-                        $sftp->get($value . '/' . $value2, $save_folder . '/' . end(explode('/',$value)) . '/' . $value2);
+                        $this->getDirectories([$value . '/' . $key2], $save_folder . '/' . end(explode('/',$value)), $sftp);
                     }
-//                }
+                    else
+                    {
+                        $sftp->get($value . '/' . $key2, $save_folder . '/' . end(explode('/',$value)) . '/' . $key2);
+                    }
+                }
             }
-
         }
     }
 
@@ -103,6 +103,7 @@ class Backup
         if (is_dir($dir))
         {
             $objects = scandir($dir);
+
             foreach ($objects as $object)
             {
                 if ($object != "." && $object != "..")
@@ -139,14 +140,9 @@ class Backup
 
         $save_path = SAVE_PATH . date("m_d_y") . '/' . $object['connection']['name'];
 
-        if (file_exists($save_path))
-        {
-            exit('There is already a folder with that name');
-        }
-//
         mkdir ($save_path, 0777, true);
 
-        $arr_exclude = ['connection', 'ec2', 's3'];
+        $arr_exclude = ['connection'];
 
         foreach ($object as $key => $value)
         {
@@ -165,11 +161,56 @@ class Backup
             }
 
         }
+    }
 
-        $this->_s3 = new AwsS3Handler($object['s3']['s3_key'], $object['s3']['s3_secret']);
+    public function backupAllIdInstances(){
 
-        $this->_s3->uploadToBucket(S3_BUCKET, S3_PATH . '/' . date("m_d_y"), SAVE_PATH . date("m_d_y"));
+        $files = scandir(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'cloud' . DIRECTORY_SEPARATOR . 'idInstances' . DIRECTORY_SEPARATOR);
 
-        $this->rrmdir(SAVE_PATH . date("m_d_y"));
+        $arr_exclude = ['.', '..', 'readme.txt'];
+
+        foreach ($files as $file)
+        {
+            if (!in_array($file, $arr_exclude))
+            {
+                require_once(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'cloud' . DIRECTORY_SEPARATOR . 'idInstances' . DIRECTORY_SEPARATOR . $file);
+
+                $this->backupSelected($object);
+            }
+        }
+    }
+
+    public function backupAllIpInstances(){
+
+        $files = scandir(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'cloud' . DIRECTORY_SEPARATOR . 'ipInstances' . DIRECTORY_SEPARATOR);
+
+        $arr_exclude = ['.', '..', 'readme.txt'];
+
+        foreach ($files as $file)
+        {
+            if (!in_array($file, $arr_exclude))
+            {
+                require_once(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'cloud' . DIRECTORY_SEPARATOR . 'ipInstances' . DIRECTORY_SEPARATOR . $file);
+
+                $this->backupSelected($object);
+            }
+        }
+    }
+
+     public function backupAllmicrosites(){
+
+         $files = scandir(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'cloud' . DIRECTORY_SEPARATOR . 'microsites' . DIRECTORY_SEPARATOR);
+
+        $arr_exclude = ['.', '..', 'readme.txt'];
+
+        foreach ($files as $file)
+        {
+            if (!in_array($file, $arr_exclude))
+            {
+                require_once(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'cloud' . DIRECTORY_SEPARATOR . 'microsites' . DIRECTORY_SEPARATOR . $file);
+
+                $this->backupSelected($object);
+            }
+        }
     }
 }

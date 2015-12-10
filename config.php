@@ -6,6 +6,8 @@
  */
 
 // S3 extra stuff
+define('S3_KEY', 'XXXXXXXXXXXXXXXXXXXX');
+define('S3_SECRET', 'xxxxxxxxxxxxxxxXXXxXxxxxxxxxxxxxxxxxxxx');
 define('S3_BUCKET', 'backupBucket');
 define('S3_PATH', 'backupFolder');
 
